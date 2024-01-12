@@ -320,14 +320,14 @@ checksum = "bc0000e42512c92e31c2252315bda326620a4e034105e900c98ec492fa077b3e"
 
 [[package]]
 name = "libc"
-version = "0.2.151"
+version = "0.2.152"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "302d7ab3130588088d277783b1e2d2e10c9e9e4a16dd9050e6ec93fb3e7048f4"
+checksum = "13e3bf6590cbc649f4d1a3eefc9d5d6eb746f5200ffb04e5e142700b8faa56e7"
 
 [[package]]
 name = "libcaesium"
-version = "0.13.1"
-source = "git+https://github.com/Lymphatus/libcaesium#9119be35166b157f5555a90ac1a569b6ba7fe742"
+version = "0.13.0"
+source = "git+https://github.com/Lymphatus/libcaesium?tag=0.13.0#6373ce71a8f54419a044844e105b887e91e0f474"
 dependencies = [
  "bytes",
  "image",

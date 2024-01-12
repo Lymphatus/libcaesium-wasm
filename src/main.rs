@@ -1,4 +1,5 @@
 use std::error::Error;
+use std::ptr::null_mut;
 use std::slice;
 use libc::c_void;
 
@@ -6,8 +7,6 @@ fn main() {}
 
 #[repr(C)]
 pub struct CompressionResult {
-    success: bool,
-    error_code: u8,
     pointer: *mut u8,
     len: usize,
     capacity: usize,
@@ -33,18 +32,8 @@ pub extern "C" fn drop_vector_struct(data_ptr: *mut c_void) {
 pub unsafe extern fn w_compress(input: *const u8, input_size: usize, quality: i32, keep_metadata: i32) -> *mut c_void {
     let uncompressed_buffer = slice::from_raw_parts(input, input_size);
     let keep_metadata = keep_metadata != 0;
-    let mut compressed_buffer = perform_compression(uncompressed_buffer, quality as u32, keep_metadata);
 
-    let data = CompressionResult {
-        pointer: compressed_buffer.as_mut_ptr(),
-        len: compressed_buffer.len(),
-        capacity: compressed_buffer.capacity(),
-    };
-
-    let data_ptr: *mut c_void = Box::into_raw(Box::new(data)) as *mut c_void;
-    std::mem::forget(compressed_buffer);
-
-    data_ptr
+    handle_result(perform_compression(uncompressed_buffer, quality as u32, keep_metadata))
 }
 
 #[no_mangle]
@@ -52,20 +41,34 @@ pub unsafe extern fn w_compress(input: *const u8, input_size: usize, quality: i3
 pub unsafe extern fn w_compress_to_size(input: *const u8, input_size: usize, max_size: i32, keep_metadata: i32) -> *mut c_void {
     let uncompressed_buffer = slice::from_raw_parts(input, input_size);
     let keep_metadata = keep_metadata != 0;
-    let mut compressed_buffer = perform_compression_to_size(uncompressed_buffer, max_size as u32, keep_metadata);
+    handle_result(perform_compression_to_size(uncompressed_buffer, max_size as u32, keep_metadata))
+}
 
-    let data = CompressionResult {
-        success: true,
+fn handle_result(result: Result<Vec<u8>, Box<dyn Error>>) -> *mut c_void {
+    let mut pointer: *mut u8 = null_mut();
+    let mut len = 0;
+    let mut capacity = 0;
 
-        pointer: compressed_buffer.as_mut_ptr(),
-        len: compressed_buffer.len(),
-        capacity: compressed_buffer.capacity(),
+    match result {
+        Ok(mut buffer) => {
+            pointer = buffer.as_mut_ptr();
+            len = buffer.len();
+            capacity = buffer.capacity();
+
+            std::mem::forget(buffer);
+        }
+        Err(e) => {
+            println!("{:?}", e);
+        }
     };
 
-    let data_ptr: *mut c_void = Box::into_raw(Box::new(data)) as *mut c_void;
-    std::mem::forget(compressed_buffer);
+    let data = CompressionResult {
+        pointer,
+        len,
+        capacity,
+    };
 
-    data_ptr
+    Box::into_raw(Box::new(data)) as *mut c_void
 }
 
 fn perform_compression_to_size(file: &[u8], max_size: u32, keep_metadata: bool) -> Result<Vec<u8>, Box<dyn Error>> {

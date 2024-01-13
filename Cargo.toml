@@ -4,5 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-libcaesium = {git = "https://github.com/Lymphatus/libcaesium", tag = "0.13.0", default-features = false, features = ["jpg", "png", "webp"] }
+libcaesium = { git = "https://github.com/Lymphatus/libcaesium", rev = "c09613d", default-features = false, features = ["jpg", "png", "webp"] }
 libc = "0.2.152"

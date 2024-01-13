@@ -1,12 +1,14 @@
-use std::error::Error;
 use std::ptr::null_mut;
 use std::slice;
+use caesium::CaesiumError;
 use libc::c_void;
 
 fn main() {}
 
 #[repr(C)]
 pub struct CompressionResult {
+    status: u32,
+    error_code: u32,
     pointer: *mut u8,
     len: usize,
     capacity: usize,
@@ -44,13 +46,16 @@ pub unsafe extern fn w_compress_to_size(input: *const u8, input_size: usize, max
     handle_result(perform_compression_to_size(uncompressed_buffer, max_size as u32, keep_metadata))
 }
 
-fn handle_result(result: Result<Vec<u8>, Box<dyn Error>>) -> *mut c_void {
+fn handle_result(result: Result<Vec<u8>, CaesiumError>) -> *mut c_void {
+    let mut status:u8 = 0;
+    let mut error_code: u32 = 0;
     let mut pointer: *mut u8 = null_mut();
     let mut len = 0;
     let mut capacity = 0;
 
     match result {
         Ok(mut buffer) => {
+            status = 1;
             pointer = buffer.as_mut_ptr();
             len = buffer.len();
             capacity = buffer.capacity();
@@ -58,11 +63,14 @@ fn handle_result(result: Result<Vec<u8>, Box<dyn Error>>) -> *mut c_void {
             std::mem::forget(buffer);
         }
         Err(e) => {
-            println!("{:?}", e);
+            error_code = e.code;
+            println!("{}", e.message);
         }
     };
 
     let data = CompressionResult {
+        status: status.into(),
+        error_code,
         pointer,
         len,
         capacity,
@@ -71,14 +79,14 @@ fn handle_result(result: Result<Vec<u8>, Box<dyn Error>>) -> *mut c_void {
     Box::into_raw(Box::new(data)) as *mut c_void
 }
 
-fn perform_compression_to_size(file: &[u8], max_size: u32, keep_metadata: bool) -> Result<Vec<u8>, Box<dyn Error>> {
+fn perform_compression_to_size(file: &[u8], max_size: u32, keep_metadata: bool) -> Result<Vec<u8>, CaesiumError> {
     let mut parameters = caesium::initialize_parameters();
     parameters.keep_metadata = keep_metadata;
     let in_file = file.to_vec();
-    caesium::compress_to_size_in_memory(in_file, &mut parameters, max_size as usize)
+    caesium::compress_to_size_in_memory(in_file, &mut parameters, max_size as usize, true)
 }
 
-fn perform_compression(file: &[u8], quality: u32, keep_metadata: bool) -> Result<Vec<u8>, Box<dyn Error>> {
+fn perform_compression(file: &[u8], quality: u32, keep_metadata: bool) -> Result<Vec<u8>, CaesiumError> {
     let mut parameters = caesium::initialize_parameters();
     parameters.keep_metadata = keep_metadata;
     let quality = quality.clamp(0, 100);

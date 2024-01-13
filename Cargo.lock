@@ -326,8 +326,8 @@ checksum = "13e3bf6590cbc649f4d1a3eefc9d5d6eb746f5200ffb04e5e142700b8faa56e7"
 
 [[package]]
 name = "libcaesium"
-version = "0.13.0"
-source = "git+https://github.com/Lymphatus/libcaesium?tag=0.13.0#6373ce71a8f54419a044844e105b887e91e0f474"
+version = "0.14.0"
+source = "git+https://github.com/Lymphatus/libcaesium?rev=c09613d#c09613dbc85b39f525ba0398768e38e564eacf30"
 dependencies = [
  "bytes",
  "image",

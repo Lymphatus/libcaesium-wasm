@@ -1,3 +1,4 @@
 /target
-/static
+/static/*
+!/static/index.html
 after.sh

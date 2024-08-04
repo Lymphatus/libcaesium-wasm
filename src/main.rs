@@ -1,6 +1,7 @@
 use std::ptr::null_mut;
 use std::slice;
-use caesium::CaesiumError;
+
+use caesium::error::CaesiumError;
 use libc::c_void;
 
 fn main() {}
@@ -47,7 +48,7 @@ pub unsafe extern fn w_compress_to_size(input: *const u8, input_size: usize, max
 }
 
 fn handle_result(result: Result<Vec<u8>, CaesiumError>) -> *mut c_void {
-    let mut status:u8 = 0;
+    let mut status: u8 = 0;
     let mut error_code: u32 = 0;
     let mut pointer: *mut u8 = null_mut();
     let mut len = 0;
@@ -98,5 +99,5 @@ fn perform_compression(file: &[u8], quality: u32, keep_metadata: bool) -> Result
         parameters.webp.quality = quality;
     }
     let in_file = file.to_vec();
-    caesium::compress_in_memory(in_file, &mut parameters)
+    caesium::compress_in_memory(in_file, &parameters)
 }

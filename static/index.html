@@ -57,7 +57,7 @@
 
     CaesiumWASM().then(CaesiumWASM => {
         const input = document.getElementById("fileInput");
-        input.addEventListener("change", async event => {
+        input.addEventListener("change", async () => {
             document.getElementById('status').innerText = 'Compressing...';
             const ab = await input.files[0].arrayBuffer();
             const ui8a = new Uint8Array(ab);

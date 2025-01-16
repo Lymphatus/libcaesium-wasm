@@ -1,8 +1,8 @@
 [package]
 name = "libcaesium-wasm"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 
 [dependencies]
-libcaesium = { git = "https://github.com/Lymphatus/libcaesium", tag = "0.16.2", default-features = false, features = ["jpg", "png", "webp"] }
-libc = "0.2.155"
+libcaesium = { version = "0.17.1", default-features = false, features = ["jpg", "png", "webp"] }
+libc = "0.2.169"

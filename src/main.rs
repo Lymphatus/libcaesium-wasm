@@ -2,6 +2,7 @@ use std::ptr::null_mut;
 use std::slice;
 
 use caesium::error::CaesiumError;
+use caesium::parameters::CSParameters;
 use libc::c_void;
 
 fn main() {}
@@ -81,14 +82,14 @@ fn handle_result(result: Result<Vec<u8>, CaesiumError>) -> *mut c_void {
 }
 
 fn perform_compression_to_size(file: &[u8], max_size: u32, keep_metadata: bool) -> Result<Vec<u8>, CaesiumError> {
-    let mut parameters = caesium::initialize_parameters();
+    let mut parameters = CSParameters::new();
     parameters.keep_metadata = keep_metadata;
     let in_file = file.to_vec();
     caesium::compress_to_size_in_memory(in_file, &mut parameters, max_size as usize, true)
 }
 
 fn perform_compression(file: &[u8], quality: u32, keep_metadata: bool) -> Result<Vec<u8>, CaesiumError> {
-    let mut parameters = caesium::initialize_parameters();
+    let mut parameters = CSParameters::new();
     parameters.keep_metadata = keep_metadata;
     let quality = quality.clamp(0, 100);
     if quality == 0 {

@@ -50,6 +50,7 @@ The copy command should look like this
 
 Note that the code by default is compiled as an ES6 Module, so it supports only modern browsers.  
 The library can be compiled as vanilla JS or UMD by tweaking the `EMCC_CFLAGS` inside `Dockerfile`.
+
 ### License
 
 Licensed under Apache License, Version 2.0 (LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0)

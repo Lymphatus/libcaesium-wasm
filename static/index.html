@@ -55,6 +55,8 @@
 <script type="module">
     import CaesiumWASM from "./libcaesium-wasm.js";
 
+    const clamp = (val, min, max) => Math.min(Math.max(val, min), max)
+
     CaesiumWASM().then(CaesiumWASM => {
         const input = document.getElementById("fileInput");
         input.addEventListener("change", async () => {
@@ -65,13 +67,36 @@
                 new Blob([ui8a])
             );
             document.getElementById('originalSize').innerText = `${ui8a.length} bytes`;
-            // console.log("Uint8Array", ui8a, ui8a.length);
 
             let ptr = CaesiumWASM._malloc(ui8a.length);
             CaesiumWASM.HEAP8.set(ui8a, ptr);
 
-            const js_wrapped_compress = CaesiumWASM.cwrap("w_compress", "number", ["number", "number", "number", "number"]);
-            const dataPtr = js_wrapped_compress(ptr, ui8a.length, document.getElementById('quality').value, 1);
+
+            const buffer = new ArrayBuffer(4 * 14);
+            const view = new DataView(buffer);
+            const quality = clamp(document.getElementById('quality').value || 10, 0, 100);
+
+            view.setInt32(0, quality, true); // jpeg_quality
+            view.setInt32(4, 0, true);  // jpeg_chroma_subsampling
+            view.setInt32(8, 1, true); // jpeg_progressive
+            view.setInt32(12, quality, true); // png_quality
+            view.setInt32(16, 3, true); // png_optimization_level
+            view.setInt32(20, 0, true); // png_force_zopfli
+            view.setInt32(24, quality, true); // webp_quality
+            view.setInt32(28, 2, true); // tiff_compression
+            view.setInt32(32, 6, true); // tiff_deflate_level
+            view.setInt32(36, quality, true); // gif_quality
+            view.setInt32(40, 1, true); // keep_metadata
+            view.setInt32(44, 0, true); // optimize
+            view.setInt32(48, 0, true); // width
+            view.setInt32(52, 0, true); // height
+
+            const opts_ptr = CaesiumWASM._malloc(buffer.byteLength);
+            CaesiumWASM.HEAPU8.set(new Uint8Array(buffer), opts_ptr);
+
+
+            const js_wrapped_compress = CaesiumWASM.cwrap("w_compress", "number", ["number", "number", "number"]);
+            const dataPtr = js_wrapped_compress(ptr, ui8a.length, opts_ptr);
             let status = CaesiumWASM.getValue(dataPtr, 'i32')
             let errorCode = CaesiumWASM.getValue(dataPtr + 4, 'i32')
             let vecPtr = CaesiumWASM.getValue(dataPtr + 8, 'i32');
@@ -99,6 +124,7 @@
             drop_vector_struct(dataPtr);
 
             CaesiumWASM._free(ptr);
+            CaesiumWASM._free(opts_ptr);
             // CaesiumWASM._free(vecPtr);
         });
     })

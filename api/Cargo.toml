@@ -1,0 +1,8 @@
+[package]
+name = "libcaesium-wasm"
+version = "0.3.0"
+edition = "2021"
+
+[dependencies]
+libcaesium = { version = "0.17.4", default-features = false, features = ["jpg", "png", "webp"] }
+libc = "0.2.169"

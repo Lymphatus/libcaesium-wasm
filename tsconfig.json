@@ -9,7 +9,11 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*", "wasm/**/*.js"],
+  "include": [
+    "src/**/*",
+    "target/wasm32-unknown-emscripten/release/libcaesium-wasm.js",
+    "target/wasm32-unknown-emscripten/release/libcaesium_wasm.wasm"
+  ]
 }

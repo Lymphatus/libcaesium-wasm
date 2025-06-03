@@ -1,25 +1,31 @@
 {
   "name": "libcaesium-wasm",
   "version": "0.1.0",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
     "build:rust": "cross build --release",
-    "build:ts": "tsup",
+    "build:ts": "vite build",
     "build": "npm run build:rust && npm run build:ts"
   },
   "type": "module",
   "license": "MIT",
   "author": "Matteo Paonessa",
   "devDependencies": {
-    "tsup": "^8.5.0",
-    "typescript": "^5.8.3"
-  }
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vite-plugin-static-copy": "^3.0.0"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ]
 }

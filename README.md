@@ -1,3 +1,4 @@
+WASM compiled code for [libcaesium](https://github.com/Lymphatus/libcaesium).
 This allows you to run (almost) the full libcaesium potential directly inside the browser or in any node.js environment.
 
 ## Table of Contents
@@ -80,24 +81,7 @@ This will output the compressed image in the same folder as the original with th
 
 ### Browser Example
 
-To test the browser example:
-
-1. Build the project:
-   ```sh
-   npm run build
-   ```
-
-2. Serve the `index.html` file with a local web server:
-
-   ```sh
-   # Using Python
-   python -m http.server 3000
-   
-   # Or using Node.js
-   npx serve .
-   ```
-
-3. Open `http://localhost:3000` in your browser
+See GitHub pages link
 
 ## API Reference
 

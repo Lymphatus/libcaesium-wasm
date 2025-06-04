@@ -5,8 +5,8 @@ on:
     branches: [ "main" ]
     paths-ignore:
       - 'README.md'
-      - '../../LICENSE.md'
-      - '/static/*'
+      - 'LICENSE.md'
+      - '/examples/*'
   pull_request:
     branches: [ "main" ]
 

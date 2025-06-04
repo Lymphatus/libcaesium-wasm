@@ -1,3 +1,5 @@
+# libcaesium WASM
+
 WASM compiled code for [libcaesium](https://github.com/Lymphatus/libcaesium).
 This allows you to run (almost) the full libcaesium potential directly inside the browser or in any node.js environment.
 
@@ -81,7 +83,7 @@ This will output the compressed image in the same folder as the original with th
 
 ### Browser Example
 
-See GitHub pages link
+See the [demo here](https://lymphatus.github.io/libcaesium-wasm/).
 
 ## API Reference
 

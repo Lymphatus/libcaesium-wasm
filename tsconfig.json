@@ -1,19 +1,22 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "Node",
     "declaration": true,
-    "outDir": "./dist",
+    "declarationDir": "dist",
+    "emitDeclarationOnly": true,
+    "outDir": "dist",
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "Node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "typeRoots": ["src/types", "node_modules/@types"],
+    "baseUrl": ".",
+    "paths": {
+      "libcaesium-wasm.js": ["target/wasm32-unknown-emscripten/release/libcaesium-wasm.js"]
+    }
   },
   "include": [
-    "src/**/*",
-    "target/wasm32-unknown-emscripten/release/libcaesium-wasm.js",
-    "target/wasm32-unknown-emscripten/release/libcaesium_wasm.wasm"
+    "src/**/*"
   ]
 }

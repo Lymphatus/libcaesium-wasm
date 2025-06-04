@@ -1,6 +1,7 @@
 import {defineConfig} from 'vite';
-import { viteStaticCopy } from 'vite-plugin-static-copy';
-
+import {viteStaticCopy} from 'vite-plugin-static-copy';
+import dts from 'vite-plugin-dts';
+import path from 'path';
 
 export default defineConfig({
     build: {
@@ -18,7 +19,15 @@ export default defineConfig({
         target: 'esnext',
         outDir: 'dist'
     },
+    resolve: {
+        alias: {
+            'libcaesium-wasm.js': path.resolve(__dirname, 'target/wasm32-unknown-emscripten/release/libcaesium-wasm.js')
+        }
+    },
     plugins: [
+        dts({
+            insertTypesEntry: true,
+        }),
         viteStaticCopy({
             targets: [
                 {

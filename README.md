@@ -1,57 +1,127 @@
-# Libcaesium WASM
-
-WASM compiled code for [libcaesium](https://github.com/Lymphatus/libcaesium).  
-This allows you to run (almost) the full libcaesium potential directly inside the browser.
+This allows you to run (almost) the full libcaesium potential directly inside the browser or in any node.js environment.
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
+- [Building the Project](#building-the-project)
 - [Usage](#usage)
+    - [Node.js Example](#nodejs-example)
+    - [Browser Example](#browser-example)
+- [API Reference](#api-reference)
 - [License](#license)
 
-### Prerequisites
+## Prerequisites
 
-- [Docker](https://www.docker.com/get-started)
-- [Cross](https://github.com/cross-rs/cross)
+Before building this project, make sure you have the following tools installed:
 
-### Installation
+### Required Tools
+
+- [**Rust**](https://www.rust-lang.org/) (Latest stable version recommended)
+- [**Docker**](https://www.docker.com/) (or any alternative you like)
+- [**Cross**](https://github.com/cross-rs/cross) (For cross-compilation to WASM)
+- [**Node.js**](https://nodejs.org/) (v22 or higher recommended)
+
+## Installation
 
 1. Clone the repository:
-
-    ```sh
-    git clone https://github.com/Lymphatus/libcaesium-wasm.git
-    cd libcaesium-wasm
-    ```
-
-2. Install Cross:
-
-    ```sh
-    cargo install cross --git https://github.com/cross-rs/cross
-    ```
-
-3. Build the library:
-
    ```sh
-   cross build --release
+   git clone https://github.com/Lymphatus/libcaesium-wasm.git
+   cd libcaesium-wasm
    ```
 
-### Usage
-
-You can test the compression by copying the compiled `libcaesium-wasm.js` and `libcaesium_wasm.wasm` files into
-the `static` folder of the project. You can then open the `static/index.html` file to have a small demo of the usage.
-
-The copy command should look like this
-
+2. Install Node.js dependencies:
    ```sh
-   cp target/wasm32-unknown-emscripten/release/libcaesium-wasm.js static/libcaesium-wasm.js
-   cp target/wasm32-unknown-emscripten/release/libcaesium_wasm.wasm static/libcaesium_wasm.wasm
+   npm install
    ```
 
-Note that the code by default is compiled as an ES6 Module, so it supports only modern browsers.  
-The library can be compiled as vanilla JS or UMD by tweaking the `EMCC_CFLAGS` inside `Dockerfile`.
+## Building the Project
 
-### License
+To build both the Rust WASM library and TypeScript bindings:
 
-Licensed under Apache License, Version 2.0 (LICENSE-APACHE or http://www.apache.org/licenses/LICENSE-2.0)
+```sh
+npm run build
+``` 
+
+This command will:
+
+1. Compile the Rust code to WASM using Cross and Docker (`npm run build:rust`)
+2. Build the TypeScript wrapper and generate type definitions (`npm run build:ts`)
+
+### Individual Build Steps
+
+You can also run the build steps individually:
+
+```sh
+# Build only the Rust WASM library
+npm run build:rust
+# Build only the TypeScript wrapper
+npm run build:ts
+``` 
+
+### Build Output
+
+After a successful build, you'll find the output files in the `dist` directory.
+
+## Usage
+
+### Node.js Example
+
+You can test the provided example by running:
+
+```sh
+# Build the project first
+npm run build
+# Run the example with an image file
+npx tsx examples/example.ts path/to/your/image.jpg
+``` 
+
+This will output the compressed image in the same folder as the original with the `_compressed` suffix.
+
+### Browser Example
+
+To test the browser example:
+
+1. Build the project:
+   ```sh
+   npm run build
+   ```
+
+2. Serve the `index.html` file with a local web server:
+
+   ```sh
+   # Using Python
+   python -m http.server 3000
+   
+   # Or using Node.js
+   npx serve .
+   ```
+
+3. Open `http://localhost:3000` in your browser
+
+## API Reference
+
+### Functions
+
+- `initialize()`: Promise that initializes the WASM module. Must be called before using compression functions.
+- `compress(imageData: Uint8Array, options: CompressionOptions)`: Compresses an image with the specified options.
+
+### Types
+
+```typescript
+interface CompressionOptions {
+    jpeg: { quality: number; chromaSubsampling: number; progressive: boolean };
+    png: { quality: number; optimizationLevel: number; forceZopfli: boolean };
+    webp: { quality: number };
+    tiff: { compression: number; deflateLevel: number };
+    gif: { quality: number };
+    keepMetadata: boolean;
+    optimize: boolean;
+    width: number;
+    height: number;
+}
+```
+
+## License
+
 See LICENSE.md for details.

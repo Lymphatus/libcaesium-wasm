@@ -1,4 +1,5 @@
 src/
 vite.config.ts
 tsconfig.json
+examples/
 *.log

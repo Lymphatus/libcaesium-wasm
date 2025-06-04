@@ -42,16 +42,25 @@ jobs:
       - name: Build WASM assets
         run: npm run build:ts && cp examples/index.html dist/index.html
 
-  # Deploy to GitHub Pages
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-files
+          path: dist/
+
   deploy:
     needs: build
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-files
+          path: dist/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5

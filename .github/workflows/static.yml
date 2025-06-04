@@ -23,10 +23,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Rust
+      - name: Build Rust
         uses: houseabsolute/actions-rust-cross@v0
         with:
+          command: build
           target: wasm32-unknown-emscripten
+          args: "--locked --release"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

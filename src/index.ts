@@ -80,7 +80,7 @@ export function compress(ui8a: Uint8Array, options: CompressionOptions): Compres
 
   //TODO what if we exceed the size of each option?
   view.setInt32(0, clamp(options.jpeg.quality, 0, 100), true); // jpeg_quality
-  view.setInt32(4, options.jpeg.chromaSubsampling, true); // jpeg_chroma_subsampling
+  view.setInt32(4, clamp(options.jpeg.chromaSubsampling, 0, 444), true); // jpeg_chroma_subsampling
   view.setInt32(8, options.jpeg.progressive ? 1 : 0, true); // jpeg_progressive
   view.setInt32(12, clamp(options.png.quality, 0, 100), true); // png_quality
   view.setInt32(16, clamp(options.png.optimizationLevel, 0, 6), true); // png_optimization_level
@@ -91,8 +91,8 @@ export function compress(ui8a: Uint8Array, options: CompressionOptions): Compres
   view.setInt32(36, clamp(options.gif.quality, 1, 4), true); // gif_quality
   view.setInt32(40, options.keepMetadata ? 1 : 0, true); // keep_metadata
   view.setInt32(44, options.optimize ? 1 : 0, true); // optimize
-  view.setInt32(48, options.width, true); // width
-  view.setInt32(52, options.height, true); // height
+  view.setInt32(48, clamp(options.width, 0, 999999), true); // width
+  view.setInt32(52, clamp(options.height, 0, 999999), true); // height
 
   const opts_ptr = libcaesium._malloc(buffer.byteLength);
   libcaesium.HEAPU8.set(new Uint8Array(buffer), opts_ptr);

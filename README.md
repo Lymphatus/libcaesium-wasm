@@ -96,13 +96,12 @@ See the [demo here](https://lymphatus.github.io/libcaesium-wasm/).
 
 ```typescript
 interface CompressionOptions {
-    jpeg: { quality: number; chromaSubsampling: number; progressive: boolean };
-    png: { quality: number; optimizationLevel: number; forceZopfli: boolean };
-    webp: { quality: number };
+    jpeg: { quality: number; chromaSubsampling: number; progressive: boolean, optmize: boolean };
+    png: { quality: number; optimizationLevel: number; forceZopfli: boolean, optimize: boolean };
+    webp: { quality: number, lossless: boolean };
     tiff: { compression: number; deflateLevel: number };
     gif: { quality: number };
     keepMetadata: boolean;
-    optimize: boolean;
     width: number;
     height: number;
 }

@@ -107,22 +107,27 @@
         document.getElementById('compressedSize').textContent = '';
         document.getElementById('compressed').src = '';
 
+
         try {
             const quality = parseInt(document.getElementById('quality').value, 10);
+            const lossless = document.getElementById('lossless').checked;
 
             const compressionOptions = {
                 jpeg: {
                     quality,
                     chromaSubsampling: 0,
                     progressive: true,
+                    optimize: lossless
                 },
                 png: {
                     quality,
                     optimizationLevel: 3,
                     forceZopfli: false,
+                    optimize: lossless
                 },
                 webp: {
                     quality,
+                    lossless,
                 },
                 tiff: {
                     compression: 2,
@@ -132,7 +137,6 @@
                     quality,
                 },
                 keepMetadata: document.getElementById('keep-metadata').checked,
-                optimize: document.getElementById('lossless').checked,
                 width: parseInt(document.getElementById('width').value, 10) || 0,
                 height: parseInt(document.getElementById('height').value, 10) || 0,
             };

@@ -43,14 +43,17 @@ export interface CompressionOptions {
     quality: number;
     chromaSubsampling: number;
     progressive: boolean;
+    optimize: boolean;
   };
   png: {
     quality: number;
     optimizationLevel: number;
     forceZopfli: boolean;
+    optimize: boolean;
   };
   webp: {
     quality: number;
+    lossless: boolean;
   };
   tiff: {
     compression: number;
@@ -60,7 +63,6 @@ export interface CompressionOptions {
     quality: number;
   };
   keepMetadata: boolean;
-  optimize: boolean;
   width: number;
   height: number;
 }
@@ -75,24 +77,26 @@ export function compress(ui8a: Uint8Array, options: CompressionOptions): Compres
   const ptr = libcaesium._malloc(ui8a.length);
   libcaesium.HEAP8.set(ui8a, ptr);
 
-  const buffer = new ArrayBuffer(4 * 14);
+  const buffer = new ArrayBuffer(4 * 16);
   const view = new DataView(buffer);
 
   //TODO what if we exceed the size of each option?
   view.setInt32(0, clamp(options.jpeg.quality, 0, 100), true); // jpeg_quality
   view.setInt32(4, clamp(options.jpeg.chromaSubsampling, 0, 444), true); // jpeg_chroma_subsampling
   view.setInt32(8, options.jpeg.progressive ? 1 : 0, true); // jpeg_progressive
-  view.setInt32(12, clamp(options.png.quality, 0, 100), true); // png_quality
-  view.setInt32(16, clamp(options.png.optimizationLevel, 0, 6), true); // png_optimization_level
-  view.setInt32(20, options.png.forceZopfli ? 1 : 0, true); // png_force_zopfli
-  view.setInt32(24, clamp(options.webp.quality, 0, 100), true); // webp_quality
-  view.setInt32(28, clamp(options.tiff.compression, 1, 4), true); // tiff_compression //TODO enum
-  view.setInt32(32, clamp(options.tiff.deflateLevel, 1, 9), true); // tiff_deflate_level
-  view.setInt32(36, clamp(options.gif.quality, 1, 4), true); // gif_quality
-  view.setInt32(40, options.keepMetadata ? 1 : 0, true); // keep_metadata
-  view.setInt32(44, options.optimize ? 1 : 0, true); // optimize
-  view.setInt32(48, clamp(options.width, 0, 999999), true); // width
-  view.setInt32(52, clamp(options.height, 0, 999999), true); // height
+  view.setInt32(12, options.jpeg.optimize ? 1 : 0, true); // jpeg_optimize
+  view.setInt32(16, clamp(options.png.quality, 0, 100), true); // png_quality
+  view.setInt32(20, clamp(options.png.optimizationLevel, 0, 6), true); // png_optimization_level
+  view.setInt32(24, options.png.forceZopfli ? 1 : 0, true); // png_force_zopfli
+  view.setInt32(28, options.png.optimize ? 1 : 0, true); // png_optimize
+  view.setInt32(32, clamp(options.webp.quality, 0, 100), true); // webp_quality
+  view.setInt32(36, options.webp.lossless ? 1 : 0, true); // webp_lossless
+  view.setInt32(40, clamp(options.tiff.compression, 1, 4), true); // tiff_compression //TODO enum
+  view.setInt32(44, clamp(options.tiff.deflateLevel, 1, 9), true); // tiff_deflate_level
+  view.setInt32(48, clamp(options.gif.quality, 1, 4), true); // gif_quality
+  view.setInt32(52, options.keepMetadata ? 1 : 0, true); // keep_metadata
+  view.setInt32(56, clamp(options.width, 0, 999999), true); // width
+  view.setInt32(60, clamp(options.height, 0, 999999), true); // height
 
   const opts_ptr = libcaesium._malloc(buffer.byteLength);
   libcaesium.HEAPU8.set(new Uint8Array(buffer), opts_ptr);

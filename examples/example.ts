@@ -23,13 +23,12 @@ try {
   console.log(`Compressing ${path.basename(filePath)}...`);
   const fileContent = fs.readFileSync(filePath);
   const compressionOptions: CompressionOptions = {
-    jpeg: { quality: 50, chromaSubsampling: 0, progressive: true },
-    png: { quality: 80, optimizationLevel: 2, forceZopfli: false },
-    webp: { quality: 80 },
+    jpeg: { quality: 50, chromaSubsampling: 0, progressive: true, optimize: false },
+    png: { quality: 80, optimizationLevel: 2, forceZopfli: false, optimize: false },
+    webp: { quality: 80, lossless: false },
     tiff: { compression: 80, deflateLevel: 6 },
     gif: { quality: 1 },
     keepMetadata: true,
-    optimize: false,
     width: 0,
     height: 0,
   };
